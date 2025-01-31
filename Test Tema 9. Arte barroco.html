@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barroco y Rococó</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md rounded-lg p-6 max-w-md w-full">
+        <h1 class="text-2xl font-bold text-center mb-4">Barroco y Rococó</h1>
+        <div id="quiz-container">
+            <!-- Aquí se mostrará la pregunta -->
+        </div>
+        <div id="feedback" class="text-center mt-4 text-lg font-medium"></div>
+        <div id="score" class="text-center mt-4">
+            <p>Aciertos: <span id="correct-count">0</span></p>
+            <p>Fallos: <span id="incorrect-count">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Depósito de preguntas y respuestas
+        const allQuestions = [
+            [
+    { question: "¿En qué siglo surgió el arte barroco?", options: ["XVI", "XVII", "XVIII", "XIX"], answer: 1 },
+    { question: "¿Qué movimiento religioso influyó en el arte barroco?", options: ["Luteranismo", "Ilustración", "Contrarreforma", "Romanticismo"], answer: 2 },
+    { question: "¿Cuál fue el principal objetivo del arte barroco en los países católicos?", options: ["Promover la burguesía", "Exaltar el poder papal y la Iglesia", "Representar la vida cotidiana", "Criticar el absolutismo"], answer: 1 },
+    { question: "¿Qué monarca es el mejor ejemplo de la monarquía absoluta en el barroco?", options: ["Felipe IV", "Luis XIV", "Carlos I", "Pedro el Grande"], answer: 1 },
+    { question: "¿Qué característica principal define la arquitectura barroca?", options: ["Sencillez y equilibrio", "Movimiento y teatralidad", "Geometría pura y líneas rectas", "Minimalismo y funcionalidad"], answer: 1 },
+    { question: "¿Qué arquitecto diseñó la Plaza de San Pedro en el Vaticano?", options: ["Carlo Maderno", "Francesco Borromini", "Gian Lorenzo Bernini", "Le Vau"], answer: 2 },
+    { question: "¿Quién finalizó la fachada de la basílica de San Pedro del Vaticano?", options: ["Miguel Ángel", "Carlo Maderno", "Borromini", "Juan de Herrera"], answer: 1 },
+    { question: "¿Qué elemento arquitectónico caracteriza a Borromini?", options: ["Cúpulas esféricas", "Columnas salomónicas", "Fachadas lisas y simétricas", "Plantas elípticas y fachadas ondulantes"], answer: 3 },
+    { question: "¿Qué arquitecto diseñó el Palacio de Versalles?", options: ["Le Vau", "Bernini", "Mansart", "Le Nôtre"], answer: 0 },
+    { question: "¿Qué característica define la escultura barroca?", options: ["Estática y armónica", "Movimiento y dramatismo", "Sencillez y equilibrio", "Simetría y frontalidad"], answer: 1 },
+    { question: "¿Quién es el principal escultor del barroco italiano?", options: ["Canova", "Bernini", "Miguel Ángel", "Donatello"], answer: 1 },
+    { question: "¿Qué escultura de Bernini representa a una santa en éxtasis místico?", options: ["David", "Apolo y Dafne", "El éxtasis de Santa Teresa", "La Piedad"], answer: 2 },
+    { question: "¿Qué material se utilizaba mayormente en la escultura barroca española?", options: ["Bronce", "Mármol", "Madera policromada", "Hierro"], answer: 2 },
+    { question: "¿Cuál es una característica clave de la escultura barroca española?", options: ["Idealización de figuras", "Uso de líneas rectas", "Dramatismo y realismo extremo", "Escenas mitológicas"], answer: 2 },
+    { question: "¿Qué pintor es el máximo representante del tenebrismo?", options: ["Rembrandt", "Velázquez", "Caravaggio", "Rubens"], answer: 2 },
+    { question: "¿Qué obra de Caravaggio representa un llamado divino?", options: ["La vocación de San Mateo", "El éxtasis de Santa Teresa", "Las Meninas", "La Ronda de Noche"], answer: 0 },
+    { question: "¿Quién fue una destacada pintora barroca italiana?", options: ["Artemisia Gentileschi", "Clara Peeters", "Élisabeth Vigée Lebrun", "Judith Leyster"], answer: 0 },
+    { question: "¿Qué pintura de Artemisia Gentileschi representa la venganza de una mujer sobre su enemigo?", options: ["Judith decapitando a Holofernes", "La muerte de la Virgen", "La lección de anatomía", "El jardín del amor"], answer: 0 },
+    { question: "¿Qué género pictórico fue característico de los Países Bajos en el barroco?", options: ["Pintura religiosa", "Pintura de historia", "Bodegón", "Retratos ecuestres"], answer: 2 },
+    { question: "¿Quién es el pintor más representativo del barroco flamenco?", options: ["Rembrandt", "Rubens", "Velázquez", "Carracci"], answer: 1 },
+    { question: "¿Qué obra de Rubens representa a tres figuras femeninas entrelazadas?", options: ["Las Meninas", "Las Tres Gracias", "La Ronda de Noche", "Adoración de los Magos"], answer: 1 },
+    { question: "¿Quién es el pintor más importante de la escuela holandesa barroca?", options: ["Vermeer", "Van Dyck", "Rembrandt", "Tiziano"], answer: 2 },
+    { question: "¿Qué pintura de Rembrandt muestra una escena de lección médica?", options: ["La Ronda de Noche", "La lección de anatomía del Doctor Tulp", "El sueño de Jacob", "San Andrés"], answer: 1 },
+    { question: "¿Qué pintor español es considerado uno de los más grandes del barroco?", options: ["Zurbarán", "Murillo", "Velázquez", "Goya"], answer: 2 },
+    { question: "¿Qué obra de Velázquez muestra un grupo de personajes reflejados en un espejo?", options: ["La Rendición de Breda", "Las Meninas", "La Inmaculada", "El Jardín del Amor"], answer: 1 },
+    { question: "¿Qué estilo artístico surgió después del barroco en Francia?", options: ["Romanticismo", "Rococó", "Neoclasicismo", "Impresionismo"], answer: 1 },
+    { question: "¿Qué característica define al rococó?", options: ["Formas geométricas y sobriedad", "Curvas irregulares y decoración fastuosa", "Colores oscuros y claroscuro", "Simplicidad y naturalismo"], answer: 1 },
+    { question: "¿Quién pintó 'Peregrinación a la isla de Citera'?", options: ["Watteau", "Fragonard", "Boucher", "Rubens"], answer: 0 },
+    { question: "¿Qué pintora retrató a María Antonieta con vestido de muselina blanco?", options: ["Clara Peeters", "Élisabeth Vigée Lebrun", "Artemisia Gentileschi", "Sofonisba Anguissola"], answer: 1 },
+    { question: "¿Qué país fue el epicentro del rococó?", options: ["Italia", "España", "Francia", "Inglaterra"], answer: 2 },
+    { question: "¿Qué obra de Bernini representa una transformación mitológica?", options: ["David", "Apolo y Dafne", "El éxtasis de Santa Teresa", "Las Tres Gracias"], answer: 1 },
+    { question: "¿Qué obra de Caravaggio causó controversia por su realismo extremo?", options: ["La vocación de San Mateo", "La muerte de la Virgen", "Judith decapitando a Holofernes", "El jardín del amor"], answer: 1 },
+    { question: "¿Qué técnica pictórica se caracteriza por el uso extremo del claroscuro?", options: ["Sfumatto", "Tenebrismo", "Impasto", "Divisionismo"], answer: 1 },
+    { question: "¿Qué tipo de pintura predominó en los países protestantes durante el barroco?", options: ["Pintura religiosa", "Retratos y escenas cotidianas", "Pintura histórica", "Frescos mitológicos"], answer: 1 },
+    { question: "¿Qué característica NO es propia del arte barroco?", options: ["Teatralidad", "Movimiento", "Simplicidad geométrica", "Contrastes dramáticos"], answer: 2 }
+]
+
+            // Más preguntas aquí...
+        ];
+
+        // Función para obtener 20 preguntas aleatorias
+        function getRandomQuestions() {
+            const shuffled = allQuestions.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 20);
+        }
+
+        // Desordenar las opciones de respuesta
+        function shuffleOptions(options) {
+            return options.map(value => ({ value, sort: Math.random() }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ value }) => value);
+        }
+
+        const questions = getRandomQuestions();
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+
+        const quizContainer = document.getElementById("quiz-container");
+        const feedbackContainer = document.getElementById("feedback");
+        const correctCountSpan = document.getElementById("correct-count");
+        const incorrectCountSpan = document.getElementById("incorrect-count");
+
+        function loadQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            const shuffledOptions = shuffleOptions([...questionData.options]);
+            feedbackContainer.textContent = ""; // Limpiar feedback anterior
+            quizContainer.innerHTML = `
+                <p class="text-lg font-medium mb-4">${questionData.question}</p>
+                <div class="space-y-2">
+                    ${shuffledOptions.map((option, index) => `
+                        <button 
+                            class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none" 
+                            onclick="checkAnswer('${option}')">
+                            ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkAnswer(selectedOption) {
+            const questionData = questions[currentQuestionIndex];
+            if (selectedOption === questionData.options[questionData.answer]) {
+                feedbackContainer.textContent = "¡Correcto!";
+                feedbackContainer.classList.add("text-green-500");
+                feedbackContainer.classList.remove("text-red-500");
+                correctCount++;
+            } else {
+                feedbackContainer.textContent = `Incorrecto. La respuesta correcta era: ${questionData.options[questionData.answer]}`;
+                feedbackContainer.classList.add("text-red-500");
+                feedbackContainer.classList.remove("text-green-500");
+                incorrectCount++;
+            }
+
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                setTimeout(loadQuestion, 1000); // Esperar un segundo antes de cargar la siguiente pregunta
+            } else {
+                quizContainer.innerHTML = `
+                    <p class="text-lg font-medium">Has completado el quiz.</p>
+                    <p class="mt-2">Aciertos: ${correctCount}</p>
+                    <p>Fallos: ${incorrectCount}</p>
+                    <button class="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 focus:outline-none" onclick="restartQuiz()">Reiniciar</button>
+                `;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            feedbackContainer.textContent = "";
+            loadQuestion();
+        }
+
+        // Cargar las preguntas aleatorias
+        loadQuestion();
+    </script>
+</body>
+</html>
